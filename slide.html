@@ -99,7 +99,13 @@ button:hover {
       "./11.png",
       "./12.png"
     ];
-
+// Preload images
+const preloaded = [];
+slides.forEach((src) => {
+  const img = new Image();
+  img.src = src;
+  preloaded.push(img);
+});
     let current = 0;
     const slideImg = document.getElementById('slide');
 
@@ -182,3 +188,4 @@ button:hover {
   </script>
 </body>
 </html>
+
