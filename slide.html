@@ -17,49 +17,59 @@
       font-family: 'Poppins', sans-serif;
     }
 
-    img {
+    .slide-container {
+      position: relative;
+      width: 90%;
+      height: 90%;
+      overflow: hidden;
+    }
+
+    .slide-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       object-fit: contain;
-      transition: opacity 0.5s ease;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
     }
 
-.controls {
-  position: fixed;
-  bottom: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 40px;
-  z-index: 5;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 10px 25px;
-  border-radius: 12px;
-  backdrop-filter: blur(8px);
-  pointer-events: none; /* Prevent blocking slide content */
-}
+    .slide-container img.active {
+      opacity: 1;
+      z-index: 1;
+    }
 
-.controls button {
-  pointer-events: all; /* Allow clicks on buttons only */
-}
+    .controls {
+      position: fixed;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 40px;
+      z-index: 5;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 25px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
 
+    .controls button {
+      pointer-events: all;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s ease;
+    }
 
-
-button {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: 0.3s ease;
-}
-
-button:hover {
-  background: rgba(255, 255, 255, 0.18);
-}
-
+    .controls button:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
 
     .back-btn {
       position: absolute;
@@ -69,6 +79,10 @@ button:hover {
       padding: 10px 18px;
       border-radius: 8px;
       font-size: 0.95rem;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
     }
 
     .back-btn:hover {
@@ -78,7 +92,12 @@ button:hover {
 </head>
 <body>
   <button class="back-btn" onclick="exitPresentation()">← Back</button>
-  <img id="slide" src="./1.png" alt="Slide">
+
+  <div class="slide-container" id="slideContainer">
+    <img id="slide1" src="./1.png" class="active" alt="Slide">
+    <img id="slide2" alt="Slide">
+  </div>
+
   <div class="controls">
     <button id="prevBtn">◀ Previous</button>
     <button id="nextBtn">Next ▶</button>
@@ -86,63 +105,58 @@ button:hover {
 
   <script>
     const slides = [
-      "./1.png",
-      "./2.png",
-      "./3.png",
-      "./4.png",
-      "./5.png",
-      "./6.png",
-      "./7.png",
-      "./8.png",
-      "./9.png",
-      "./10.png",
-      "./11.png",
-      "./12.png"
+      "./1.png","./2.png","./3.png","./4.png","./5.png","./6.png",
+      "./7.png","./8.png","./9.png","./10.png","./11.png","./12.png"
     ];
-// Preload images
-const preloaded = [];
-slides.forEach((src) => {
-  const img = new Image();
-  img.src = src;
-  preloaded.push(img);
-});
+
+    // Preload all slides
+    const preloaded = [];
+    slides.forEach(src => {
+      const img = new Image();
+      img.src = src;
+      preloaded.push(img);
+    });
+
     let current = 0;
-    const slideImg = document.getElementById('slide');
+    const img1 = document.getElementById('slide1');
+    const img2 = document.getElementById('slide2');
+    let showingFirst = true;
 
     function showSlide() {
-      slideImg.style.opacity = 0;
-      setTimeout(() => {
-        slideImg.src = slides[current];
-        slideImg.style.opacity = 1;
-      }, 200);
+      const nextIndex = current % slides.length;
+      const nextSrc = slides[nextIndex];
+
+      const fadeOut = showingFirst ? img1 : img2;
+      const fadeIn = showingFirst ? img2 : img1;
+
+      fadeIn.src = nextSrc;
+      fadeIn.classList.add('active');
+      fadeOut.classList.remove('active');
+      showingFirst = !showingFirst;
     }
 
     function nextSlide() {
-      if (current < slides.length - 1) {
-        current++;
-        showSlide();
-      }
+      if (current < slides.length - 1) current++;
+      else current = 0;
+      showSlide();
     }
 
     function prevSlide() {
-      if (current > 0) {
-        current--;
-        showSlide();
-      }
+      if (current > 0) current--;
+      else current = slides.length - 1;
+      showSlide();
     }
 
-    // Buttons
     document.getElementById('nextBtn').addEventListener('click', nextSlide);
     document.getElementById('prevBtn').addEventListener('click', prevSlide);
 
-    // Keyboard controls
     document.addEventListener('keydown', (e) => {
       if (e.key === "ArrowRight") nextSlide();
       else if (e.key === "ArrowLeft") prevSlide();
       else if (e.key === "Escape") exitPresentation();
     });
 
-    // Auto fullscreen on load
+    // Auto fullscreen
     document.addEventListener("DOMContentLoaded", () => {
       const elem = document.documentElement;
       if (elem.requestFullscreen) elem.requestFullscreen();
@@ -150,42 +164,19 @@ slides.forEach((src) => {
       else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
     });
 
-    // Exit and go back to main
     function exitPresentation() {
       if (document.fullscreenElement) document.exitFullscreen();
       location.href = 'index.html';
     }
-  </script>
 
-  
-  <script>
-    async function goFullscreen() {
+    // Optional: lock landscape on phones
+    document.addEventListener('click', async () => {
       const elem = document.documentElement;
-
-      if (elem.requestFullscreen) {
-        await elem.requestFullscreen();
-      } else if (elem.webkitRequestFullscreen) {
-        await elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) {
-        await elem.msRequestFullscreen();
-      }
-
-      // Optional: lock landscape on phones
+      if (elem.requestFullscreen) await elem.requestFullscreen();
       if (screen.orientation && screen.orientation.lock) {
-        try {
-          await screen.orientation.lock('landscape');
-        } catch (e) {
-          console.warn('Orientation lock not supported:', e);
-        }
+        try { await screen.orientation.lock('landscape'); } catch {}
       }
-    }
-
-    // Trigger fullscreen once user taps/clicks anywhere
-    document.addEventListener('click', () => {
-      goFullscreen();
     }, { once: true });
-
   </script>
 </body>
 </html>
-
