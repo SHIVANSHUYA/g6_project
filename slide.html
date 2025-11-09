@@ -135,17 +135,28 @@
       showingFirst = !showingFirst;
     }
 
-    function nextSlide() {
-      if (current < slides.length - 1) current++;
-      else current = 0;
-      showSlide();
-    }
+function nextSlide() {
+  if (current < slides.length - 1) {
+    current++;
+    showSlide();
+  } else {
+    // Optional visual feedback at the end
+    slideImg.style.opacity = 0.6;
+    setTimeout(() => (slideImg.style.opacity = 1), 300);
+  }
+}
 
-    function prevSlide() {
-      if (current > 0) current--;
-      else current = slides.length - 1;
-      showSlide();
-    }
+function prevSlide() {
+  if (current > 0) {
+    current--;
+    showSlide();
+  } else {
+    // Optional subtle pulse when trying to go back from first slide
+    slideImg.style.opacity = 0.6;
+    setTimeout(() => (slideImg.style.opacity = 1), 300);
+  }
+}
+
 
     document.getElementById('nextBtn').addEventListener('click', nextSlide);
     document.getElementById('prevBtn').addEventListener('click', prevSlide);
@@ -180,4 +191,5 @@
   </script>
 </body>
 </html>
+
 
