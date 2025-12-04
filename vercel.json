@@ -3,7 +3,7 @@
     {
       "src": "/(.*)",
       "headers": {
-        "x-your-ip": "YOUR.IP.HERE"
+        "x-your-ip": "122.95.2.1"
       },
       "continue": true
     },
@@ -13,7 +13,7 @@
         {
           "type": "header",
           "key": "x-real-ip",
-          "value": "YOUR.IP.HERE"
+          "value": "122.95.2.1"
         }
       ],
       "dest": "/index.html"
