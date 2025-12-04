@@ -1,0 +1,27 @@
+{
+  "routes": [
+    {
+      "src": "/(.*)",
+      "headers": {
+        "x-robots-tag": "noindex"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-real-ip",
+          "value": "YOUR.IP.HERE"
+        }
+      ],
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "status": 403,
+      "dest": "/403.html"
+    }
+  ]
+}
