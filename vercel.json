@@ -3,7 +3,7 @@
     {
       "src": "/(.*)",
       "headers": {
-        "x-robots-tag": "noindex"
+        "x-your-ip": "YOUR.IP.HERE"
       },
       "continue": true
     },
@@ -20,8 +20,7 @@
     },
     {
       "src": "/(.*)",
-      "status": 403,
-      "dest": "/403.html"
+      "status": 403
     }
   ]
 }
